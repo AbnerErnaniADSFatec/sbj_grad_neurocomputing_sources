@@ -82,6 +82,7 @@ class FFNeuralNetwork:
         self.weights = W0
         self.e_epochs = []
         self.mse_epochs = []
+        self.fold_val_mse_history = []
         self.fold_errors = []
         self.fold_precision = []
         self.fold_recall = []
@@ -189,7 +190,7 @@ class FFNeuralNetwork:
             np.random.shuffle(indices)
 
             for k in indices:
-                x_i = x[k].reshape(-1,1)   # ✅ agora correto
+                x_i = x[k].reshape(-1,1)   # agora correto
                 y_i = y[k].reshape(-1,1)
 
                 error = self.backprop(x_i, y_i, learning_rate)
@@ -203,6 +204,44 @@ class FFNeuralNetwork:
             if epoch % 100 == 0:
                 print(f"Epoch {epoch}, Erro: {self.e_epochs[-1]}")
 
+        return self
+    
+    def fit_with_val(self, X_train, y_train, X_val, y_val, learning_rate=0.05, n_epochs=500):
+        self.mse_epochs = []
+        self.val_mse_epochs = []
+    
+        indices = list(range(len(X_train)))
+    
+        for epoch in range(n_epochs):
+            e_sum = 0
+            np.random.shuffle(indices)
+    
+            # TREINO
+            for k in indices:
+                x_i = X_train[k].reshape(-1,1)
+                y_i = y_train[k].reshape(-1,1)
+    
+                error = self.backprop(x_i, y_i, learning_rate)
+                e_sum += error[0][0]**2
+    
+            train_mse = e_sum / len(X_train)
+            self.mse_epochs.append(train_mse)
+    
+            val_errors = []
+    
+            for i in range(len(X_val)):
+                x_i = X_val[i].reshape(-1,1)
+                y_true = y_val[i]
+    
+                y_pred = self.process(x_i)[0][0]
+                val_errors.append((y_true - y_pred)**2)
+    
+            val_mse = np.mean(val_errors)
+            self.val_mse_epochs.append(val_mse)
+    
+            if epoch % 50 == 0:
+                print(f"Epoch {epoch} | Train MSE: {train_mse:.4f} | Val MSE: {val_mse:.4f}")
+    
         return self
 
     def fit_by_folds(self, folds, learning_rate=0.05, n_epochs=500, threshold = 0.5):
@@ -236,8 +275,9 @@ class FFNeuralNetwork:
             self.weights = [w.copy() for w in initial_weights]
 
             # TREINO
-            self.fit(X_train_norm, y_train, learning_rate, n_epochs)
+            self.fit_with_val(X_train_norm, y_train, X_val_norm, y_val, learning_rate, n_epochs)
             self.fold_mse_history.append(self.mse_epochs.copy())
+            self.fold_val_mse_history.append(self.val_mse_epochs.copy())
 
             # VALIDAÇÃO
             errors = []
@@ -301,9 +341,11 @@ class FFNeuralNetwork:
     
         return np.array(y_probs), np.array(y_preds)
 
-    def test(self, X_test, y_test, threshold=0.5):
+    def test(self, X_test, y_test, threshold=0.5, scaled = False):
+        X_test_norm = X_test
         # normalização usando treino
-        X_test_norm = (X_test - self.scaler_mean) / self.scaler_std
+        if not scaled:
+            X_test_norm = (X_test - self.scaler_mean) / self.scaler_std
     
         # predição
         y_probs, y_preds = self.predict(X_test_norm, threshold)
@@ -373,6 +415,17 @@ class FFNeuralNetwork:
         plt.grid(True, linestyle='--', linewidth=0.6, alpha=0.8)
         plt.show()
 
+    def plot_train_val_mse(self):    
+        plt.figure()
+        plt.plot(self.mse_epochs, label="Treino", linewidth=2)
+        plt.plot(self.val_mse_epochs, label="Validação", linewidth=2)
+        plt.xlabel("Época")
+        plt.ylabel("MSE")
+        plt.title("Treino vs Validação")
+        plt.legend()
+        plt.grid(True, linestyle='--', alpha=0.7)
+        plt.show()
+
     def plot_mse(self):
         plt.figure()
         plt.plot(self.mse_epochs, color="black")
@@ -435,6 +488,35 @@ class FFNeuralNetwork:
     
         plt.show()
 
+    def plot_train_val_quartis(self):
+        train = np.array(self.fold_mse_history)
+        val = np.array(self.fold_val_mse_history)
+    
+        epochs = np.arange(train.shape[1])
+    
+        # estatísticas
+        t_q1, t_med, t_q3 = np.percentile(train, [25,50,75], axis=0)
+        v_q1, v_med, v_q3 = np.percentile(val, [25,50,75], axis=0)
+    
+        plt.figure()
+    
+        # treino
+        plt.plot(epochs, t_med, label="Treino (mediana)", color='blue')
+        plt.fill_between(epochs, t_q1, t_q3, alpha=0.2, color='blue')
+    
+        # validação
+        plt.plot(epochs, v_med, label="Validação (mediana)", color='red', linestyle='--')
+        plt.fill_between(epochs, v_q1, v_q3, alpha=0.2, color='red')
+    
+        plt.title("Treino vs Validação com faixa interquartil")
+        plt.xlabel("Época")
+        plt.ylabel("MSE")
+    
+        plt.legend()
+        plt.grid(True, linestyle='--', linewidth=0.6, alpha=0.8)
+    
+        plt.show()
+
     def plot_mse_by_folds_quartis(self):
         mse_matrix = np.array(self.fold_mse_history)  
         # shape: (n_folds, n_epochs)
@@ -461,4 +543,3 @@ class FFNeuralNetwork:
         plt.grid(True, linestyle='--', linewidth=0.6, alpha=0.8)
     
         plt.show()        
-        
