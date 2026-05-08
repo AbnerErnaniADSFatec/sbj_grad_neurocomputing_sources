@@ -1,0 +1,61 @@
+<VRTDataset rasterXSize="4800" rasterYSize="4800">
+  <SRS dataAxisToSRSAxisMapping="1,2">PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]</SRS>
+  <GeoTransform> -6.6717031179999998e+06,  2.3165635826395825e+02,  0.0000000000000000e+00, -1.1119505196670000e+06,  0.0000000000000000e+00, -2.3165635826374995e+02</GeoTransform>
+  <VRTRasterBand dataType="Int16" band="1">
+    <Metadata>
+      <MDI key="STATISTICS_APPROXIMATE">YES</MDI>
+      <MDI key="STATISTICS_MAXIMUM">9804</MDI>
+      <MDI key="STATISTICS_MEAN">823.00590744049</MDI>
+      <MDI key="STATISTICS_MINIMUM">3</MDI>
+      <MDI key="STATISTICS_STDDEV">739.57977883329</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">99.99</MDI>
+    </Metadata>
+    <NoDataValue>-1000</NoDataValue>
+    <ComplexSource resampling="nearest">
+      <SourceFilename relativeToVRT="0">/vsicurl/https://data.inpe.br/bdc/data/mod13q1/v6.1/h12/v10/2006/MOD13Q1.A2006001.h12v10.061.2020254014943/MOD13Q1.A2006001.h12v10.061.2020254014943_red_reflectance.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="4800" RasterYSize="4800" DataType="Int16" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <DstRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <NODATA>-1000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Int16" band="2">
+    <Metadata>
+      <MDI key="STATISTICS_APPROXIMATE">YES</MDI>
+      <MDI key="STATISTICS_MAXIMUM">8799</MDI>
+      <MDI key="STATISTICS_MEAN">3512.7697029075</MDI>
+      <MDI key="STATISTICS_MINIMUM">68</MDI>
+      <MDI key="STATISTICS_STDDEV">1081.0239414526</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">99.999</MDI>
+    </Metadata>
+    <NoDataValue>-1000</NoDataValue>
+    <ComplexSource resampling="nearest">
+      <SourceFilename relativeToVRT="0">/vsicurl/https://data.inpe.br/bdc/data/mod13q1/v6.1/h12/v10/2006/MOD13Q1.A2006001.h12v10.061.2020254014943/MOD13Q1.A2006001.h12v10.061.2020254014943_NIR_reflectance.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="4800" RasterYSize="4800" DataType="Int16" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <DstRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <NODATA>-1000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Int16" band="3">
+    <Metadata>
+      <MDI key="STATISTICS_APPROXIMATE">YES</MDI>
+      <MDI key="STATISTICS_MAXIMUM">7423</MDI>
+      <MDI key="STATISTICS_MEAN">624.71222337483</MDI>
+      <MDI key="STATISTICS_MINIMUM">1</MDI>
+      <MDI key="STATISTICS_STDDEV">725.00566043987</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
+    </Metadata>
+    <NoDataValue>-1000</NoDataValue>
+    <ComplexSource resampling="nearest">
+      <SourceFilename relativeToVRT="0">/vsicurl/https://data.inpe.br/bdc/data/mod13q1/v6.1/h12/v10/2006/MOD13Q1.A2006001.h12v10.061.2020254014943/MOD13Q1.A2006001.h12v10.061.2020254014943_blue_reflectance.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="4800" RasterYSize="4800" DataType="Int16" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <DstRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <NODATA>-1000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>

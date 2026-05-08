@@ -1,0 +1,37 @@
+<VRTDataset rasterXSize="4800" rasterYSize="4800">
+  <SRS dataAxisToSRSAxisMapping="1,2">PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not specified (based on custom spheroid)",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]</SRS>
+  <GeoTransform> -6.6717031179999998e+06,  2.3165635826395825e+02,  0.0000000000000000e+00, -1.1119505196670000e+06,  0.0000000000000000e+00, -2.3165635826374995e+02</GeoTransform>
+  <VRTRasterBand dataType="Int16" band="1">
+    <NoDataValue>-1000</NoDataValue>
+    <ComplexSource resampling="nearest">
+      <SourceFilename relativeToVRT="0">/vsicurl/https://data.inpe.br/bdc/data/mod13q1/v6.1/h12/v10/2005/MOD13Q1.A2005273.h12v10.061.2020247153220/MOD13Q1.A2005273.h12v10.061.2020247153220_red_reflectance.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="4800" RasterYSize="4800" DataType="Int16" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <DstRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <NODATA>-1000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Int16" band="2">
+    <NoDataValue>-1000</NoDataValue>
+    <ComplexSource resampling="nearest">
+      <SourceFilename relativeToVRT="0">/vsicurl/https://data.inpe.br/bdc/data/mod13q1/v6.1/h12/v10/2005/MOD13Q1.A2005273.h12v10.061.2020247153220/MOD13Q1.A2005273.h12v10.061.2020247153220_NIR_reflectance.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="4800" RasterYSize="4800" DataType="Int16" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <DstRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <NODATA>-1000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Int16" band="3">
+    <NoDataValue>-1000</NoDataValue>
+    <ComplexSource resampling="nearest">
+      <SourceFilename relativeToVRT="0">/vsicurl/https://data.inpe.br/bdc/data/mod13q1/v6.1/h12/v10/2005/MOD13Q1.A2005273.h12v10.061.2020247153220/MOD13Q1.A2005273.h12v10.061.2020247153220_blue_reflectance.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="4800" RasterYSize="4800" DataType="Int16" BlockXSize="512" BlockYSize="512" />
+      <SrcRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <DstRect xOff="0" yOff="0" xSize="4800" ySize="4800" />
+      <NODATA>-1000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>
