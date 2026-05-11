@@ -1,7 +1,9 @@
-import pandas as pd
-import requests
 import json
 import urllib
+
+import pandas as pd
+import requests
+
 
 def get_ts(ts_dumps):
     ts_ = json.loads(ts_dumps)

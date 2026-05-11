@@ -1,5 +1,5 @@
-import pandas as pd
 import geopandas as gpd
+import pandas as pd
 
 df = pd.read_csv('samples/insitu_mato_grosso_state_(brazil)_land_use_and_land_cover_samples_2k.csv')
 
