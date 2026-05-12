@@ -6,6 +6,7 @@ Author: Prof. Fabrício Galende Marques de Carvalho
 
 import torch.nn as nn
 
+
 class Autoencoder(nn.Module):
     def __init__(self, input_size, subnet_topology):
         super().__init__()

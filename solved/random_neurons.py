@@ -1,16 +1,17 @@
 import random
+from itertools import combinations
+from random import shuffle
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-
-from itertools import combinations
-from random import shuffle
 from sklearn.datasets import load_iris, load_wine, make_classification
 from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
 
 class ActivationFunction:
     def __init__(self, act_function):

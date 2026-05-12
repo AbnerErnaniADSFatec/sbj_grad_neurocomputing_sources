@@ -71,6 +71,53 @@ def classify_temporal_series(ts, model, window_size = 23, class_system = {}):
 
     return result, y_probs
 
+def plot_temporal(time_series, start_date=None, end_date=None):
+    # ==========================================
+    # COPY
+    # ==========================================
+    df = time_series.copy()
+    df["Index"] = pd.to_datetime(df["Index"])
+
+    # ==========================================
+    # OPTIONAL DATE FILTER
+    # ==========================================
+    if start_date is not None:
+        start_date = pd.to_datetime(start_date)
+        df = df[df["Index"] >= start_date]
+
+    if end_date is not None:
+        end_date = pd.to_datetime(end_date)
+        df = df[df["Index"] <= end_date]
+
+    # ==========================================
+    # FIGURE
+    # ==========================================
+    fig, ax = plt.subplots(figsize=(18, 6))
+
+    # ==========================================
+    # TIME SERIES
+    # ==========================================
+    ignore_columns = ["Index", "pred", "label"]
+    for column in df.columns:
+        if column not in ignore_columns:
+            ax.plot(
+                df["Index"],
+                df[column],
+                label=column,
+                linewidth=2
+            )
+
+    # ==========================================
+    # STYLE
+    # ==========================================
+    ax.set_title("Time Series")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Value")
+    ax.legend()
+    ax.grid(False)
+    plt.tight_layout()
+    plt.show()
+
 def plot_temporal_classification(time_series, class_system, title="", start_date=None, end_date=None):
     # ==========================================
     # COPY

@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 # Simple RBM definition
 class RBM(nn.Module):
     def __init__(self, n_visible, n_hidden):

@@ -10,6 +10,31 @@ from sklearn.metrics import (accuracy_score, f1_score, precision_score,
                              recall_score)
 
 # ============================================================
+# Activations and Derivatives
+# ============================================================
+
+def tanh(x):
+    return np.tanh(x)
+
+def d_tanh(x):
+    return 1 - np.tanh(x)**2
+
+def relu(x):
+    return np.maximum(0, x)
+
+def d_relu(x):
+    return (x > 0).astype(float)
+
+def softmax(x):
+    x = x - np.max(x)
+    exp_x = np.exp(x)
+    return exp_x / np.sum(exp_x, axis=0, keepdims=True)
+
+def d_softmax(x):
+    s = softmax(x).reshape(-1, 1)
+    return np.diagflat(s) - np.dot(s, s.T)
+
+# ============================================================
 # LOSSES
 # ============================================================
 
@@ -365,7 +390,6 @@ class FFNeuralNetwork:
     # ========================================================
     def compute_metrics(self, y_true, y_pred):
         if len(y_true.shape) > 1:
-
             y_true = np.argmax(y_true, axis=1)
 
         precision = precision_score(

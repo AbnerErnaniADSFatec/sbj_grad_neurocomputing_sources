@@ -5,6 +5,7 @@
 #
 import numpy as np
 
+
 class Neuron:
     """ 
     Basic neuron model used to build a single

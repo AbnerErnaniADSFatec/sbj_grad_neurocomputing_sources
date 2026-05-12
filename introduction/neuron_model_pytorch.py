@@ -9,6 +9,7 @@
 import torch
 import torch.nn as nn
 
+
 class Neuron:
     def __init__(self, weights, bias, act_fcn):
         n_features = len(weights)

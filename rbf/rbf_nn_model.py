@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class RBFNeuron:
     def __init__(self, input_size, sigma):
         random_gen = np.random.default_rng()

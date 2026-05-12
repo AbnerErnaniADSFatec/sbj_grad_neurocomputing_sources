@@ -2,10 +2,11 @@
 #
 # Author: Prof. Fabrício Galende M. de Carvalho
 
+import os
+
 import numpy as np
 import tensorflow as tf
 
-import os
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'     # only erros
 #tf.config.set_visible_devices([], 'GPU')     # only CPU is used
 
