@@ -4,72 +4,114 @@ import numpy as np
 import pandas as pd
 
 
-def classify_temporal_series(ts, model, window_size = 23, class_system = {}):
-    # ==========================================
-    # SORT DATES
-    # ==========================================
+def classify_temporal_series(ts, model, window_size=23, stride=1, thres=0.5, class_system={}):
+    # ======================================================
+    # COPY
+    # ======================================================
     df = ts.copy()
     df["Index"] = pd.to_datetime(df["Index"])
-    df = df.sort_values("Index")
-    df = df.reset_index(drop=True)
+    df = (df.sort_values("Index").reset_index(drop=True))
 
-    # ==========================================
-    # COLOR MAP
-    # ==========================================
+    # ======================================================
+    # FEATURE COLUMNS
+    # ======================================================
+    feature_cols = [col for col in df.columns if col != "Index"]
+
+    # ======================================================
+    # LABEL MAP
+    # ======================================================
     label_map = dict(zip(class_system["index"], class_system["class_name"]))
+    n_classes = len(class_system)
 
-    # ==========================================
-    # CREATE WINDOWS
-    # ==========================================
+    # ======================================================
+    # STORAGE
+    # ======================================================
+    preds_per_timestamp = [[] for _ in range(len(df))]
+    probs_per_timestamp = [[] for _ in range(len(df))]
+
+    # ======================================================
+    # CREATE SLIDING WINDOWS
+    # ======================================================
     X = []
-    pred_dates = []
-    for i in range(len(df) - window_size + 1):
-        window = df.iloc[i:i+window_size]
-        features = []
-        for _, row in window.iterrows():
-            all_features = []
-            for key in ts.keys():
-                if key != "Index":
-                    all_features.append(row[key])
-            features.extend(all_features)
+    window_positions = []
+    for start in range(0, len(df) - window_size + 1, stride):
+
+        end = start + window_size
+        window = df.iloc[start:end]
+
+        # --------------------------------------------------
+        # FLATTEN FEATURES
+        # --------------------------------------------------
+        features = (window[feature_cols].values.flatten())
         X.append(features)
-        pred_dates.append(window.iloc[-1]["Index"])
+        window_positions.append(list(range(start, end)))
+
+    # ======================================================
+    # NUMPY
+    # ======================================================
     X = np.array(X)
 
-    # ==========================================
+    # ======================================================
     # NORMALIZATION
-    # ==========================================
+    # ======================================================
     if hasattr(model, "scaler_mean"):
         X = (X - model.scaler_mean) / model.scaler_std
 
-    # ==========================================
+    # ======================================================
     # PREDICT
-    # ==========================================
-    y_probs, y_preds = model.predict(X)
+    # ======================================================
+    y_probs, y_preds = model.predict(X, threshold=thres)
 
-    # ==========================================
-    # MAP LABEL NAMES
-    # ==========================================
-    if label_map is not None:
-        labels = [label_map.get(p, None) for p in y_preds]
-    else:
-        labels = y_preds
+    # ======================================================
+    # ASSOCIATE WINDOW CLASS TO ALL TIMESTAMPS
+    # ======================================================
+    for w_idx, positions in enumerate(window_positions):
+        pred_class = int(y_preds[w_idx])
+        pred_prob = y_probs[w_idx]
+        for pos in positions:
+            preds_per_timestamp[pos].append(pred_class)
+            probs_per_timestamp[pos].append(pred_prob)
 
-    # ==========================================
-    # CREATE OUTPUT DF
-    # ==========================================
-    pred_df = pd.DataFrame({
-        "Index": pred_dates,
-        "pred": y_preds,
-        "label": labels
-    })
+    # ======================================================
+    # FINAL PREDICTIONS
+    # Uses LAST associated window
+    # ======================================================
+    final_preds = []
+    final_probs = []
+    for pred_list, prob_list in zip(preds_per_timestamp, probs_per_timestamp):
+        # --------------------------------------------------
+        # NO PREDICTION
+        # --------------------------------------------------
+        if len(pred_list) == 0:
+            final_preds.append(np.nan)
+            final_probs.append(np.full(n_classes, np.nan))
+        # --------------------------------------------------
+        # USE LAST WINDOW PREDICTION
+        # --------------------------------------------------
+        else:
+            final_preds.append(pred_list[-1])
+            final_probs.append(prob_list[-1])
 
-    # ==========================================
-    # MERGE WITH ORIGINAL SERIES
-    # ==========================================
-    result = df.merge(pred_df, on="Index", how="left")
+    # ======================================================
+    # LABELS
+    # ======================================================
+    final_labels = []
+    for pred in final_preds:
+        if pd.isna(pred):
+            final_labels.append(None)
+        else:
+            final_labels.append(label_map.get(int(pred), None))
 
-    return result, y_probs
+    # ======================================================
+    # OUTPUT
+    # ======================================================
+    result = df.copy()
+    result["pred"] = final_preds
+    result["label"] = final_labels
+
+    # probabilities as matrix
+    final_probs = np.array(final_probs)
+    return result, final_probs
 
 def plot_temporal(time_series, start_date=None, end_date=None):
     # ==========================================
@@ -178,7 +220,7 @@ def plot_temporal_classification(time_series, class_system, title="", start_date
             ax.axvspan(
                 start_date,
                 end_date,
-                color=color_map[class_id],
+                color=color_map.get(class_id, "#FFFFFF"),
                 alpha=0.25
             )
 
@@ -281,7 +323,7 @@ def plot_real_trajectory(time_series, trajectory, class_system, collection="mapb
         start = traj.iloc[i]["date"]
         end = traj.iloc[i + 1]["date"]
         cls = traj.iloc[i]["class"]
-        color = color_dict.get(cls, "#DDDDDD")
+        color = color_dict.get(cls, "#FFFFFF")
         ax.axvspan(start, end, color=color, alpha=0.25)
 
     # ------------------------------------------------------
@@ -290,7 +332,7 @@ def plot_real_trajectory(time_series, trajectory, class_system, collection="mapb
     if len(traj) > 0:
         last_date = traj.iloc[-1]["date"]
         final_date = (ts["Index"].max() if end_date is None else end_date)
-        ax.axvspan(last_date, final_date, color=color_dict.get(traj.iloc[-1]["class"],"#DDDDDD"), alpha=0.25)
+        ax.axvspan(last_date, final_date, color=color_dict.get(traj.iloc[-1]["class"], "#FFFFFF"), alpha=0.25)
 
     # ======================================================
     # TIME SERIES
@@ -305,7 +347,7 @@ def plot_real_trajectory(time_series, trajectory, class_system, collection="mapb
     class_patches = []
     used_classes = traj["class"].unique()
     for cls in used_classes:
-        patch = mpatches.Patch(color=color_dict.get(cls, "#DDDDDD"), label=cls, alpha=0.4)
+        patch = mpatches.Patch(color=color_dict.get(cls, "#FFFFFF"), label=cls, alpha=0.4)
         class_patches.append(patch)
     signal_legend = ax.legend(loc="upper left")
     ax.add_artist(signal_legend)

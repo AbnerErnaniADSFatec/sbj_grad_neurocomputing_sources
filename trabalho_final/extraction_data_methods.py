@@ -124,13 +124,6 @@ def getAllClasses(samples):
         "color": ["#FF7D66", "#5480FF", "#BDBDBD", "#698891", "#487D5D", "#AB5B96", "#45A2BF", "#92D199", "#92A7D1"]
     })
 
-def getAllClassesWLTS(wlts_):
-    return pd.DataFrame({
-        "class_name": list(set(wlts_["class"])),
-        "index": [0, 1, 2],
-        "color": ["#9BD3E8", "#C9C285", "#C0F279"]
-    })
-
 def getClass(samples, index=-1, label=''):
     classes = getAllClasses(samples)
     if index >= 0:

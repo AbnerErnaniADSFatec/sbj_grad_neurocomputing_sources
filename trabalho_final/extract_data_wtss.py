@@ -29,15 +29,11 @@ def make_request_wtss(host, coverage, bands, start, end, longitude, latitude):
         return(json.dumps({}, ensure_ascii=False))     
 
 wtss_url = "https://data.inpe.br/bdc/wtss/v4/"
-collections = ["terraclass_amazonia","mapbiomas-v10","ibge_cobertura_uso_terra","prodes_mata_atlantica"]
 
-wlts_url = "https://data.inpe.br/bdc/wlts/v1/"
 cube_name = "mod13q1-6.1"
 bands = ["NDVI", "EVI", "NIR_reflectance"]
 
 samples = pd.read_csv('./samples/samples_mt.csv')
-# samples_ = pd.read_csv('./samples/samples_mt.csv')
-# samples = samples_[:2]
 
 for row in range(0, len(samples)):
     start_date = samples['start_date'][row]
